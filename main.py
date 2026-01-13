@@ -44,13 +44,12 @@ def point(screen, x, y):
     pg.gfxdraw.box(screen, rect, FOREGROUND_COLOR)
 
 def line(screen, p1, p2):
-    # 1. Multiplica pelo zoom (SCALE) e centraliza (OFFSET)
-    # 2. Converte para inteiro (int) pois a tela não aceita decimais
+    # Converte para inteiro (int) pois a tela não aceita decimais
     x1 = int(p1['x'])
     y1 = int(p1['y'])
     x2 = int(p2['x'])
     y2 = int(p2['y'])
-
+    # Desenha a linha na tela
     pg.gfxdraw.line(screen, x1, y1, x2, y2, FOREGROUND_COLOR)
 
 def display(p: dict) -> dict:
@@ -66,20 +65,20 @@ def project(coord: dict) -> dict:
     }
 
 def translate_z(coord: dict, dz) -> dict:
-    result ={"x": coord['x'], "y": coord['y'], "z": coord['z'] + dz}
-    return result
+    return {
+        "x": coord['x'],
+        "y": coord['y'],
+        "z": coord['z'] + dz,
+    }
 
 def rotate_xz(coord: dict, angle) -> dict:
     c = math.cos(angle)
-
     s = math.sin(angle)
-
     result = {
         "x": coord["x"] * c - coord["z"] * s,
         "y": coord["y"],
         "z": coord["x"] * s + coord["z"] * c,
     }
-    print(result)
     return result
 
 
@@ -88,7 +87,7 @@ def main():
     screen = pg.display.set_mode((WIDTH, HEIGHT))
     clock = pg.time.Clock()
 
-    dz = 3.0  # Afastei um pouco mais para ver melhor
+    dz = 3.0
     angle = 0
 
     while True:
@@ -113,7 +112,6 @@ def main():
                 p1_proj = display(project(translate_z(rotate_xz(a, angle), dz)))
                 p2_proj = display(project(translate_z(rotate_xz(b, angle), dz)))
 
-                # A função line agora cuida da Escala e Inteiros
                 line(screen, p1_proj, p2_proj)
 
         pg.display.flip()
